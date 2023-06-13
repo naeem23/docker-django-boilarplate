@@ -1,0 +1,42 @@
+# git gitignore 
+.git 
+.gitignore
+
+# Django project
+/media/
+/static/
+*.sqlite3
+
+# Python and others
+__pycache__
+*.pyc
+.DS_Store
+*.swp
+/venv/
+/.venv/
+/tmp/
+/.vagrant/
+/Vagrantfile.local
+.vscode
+coverage
+
+# Distribution / packaging
+.Python
+env/
+.venv/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+demo/
+*.egg-info/
+.installed.cfg
+*.egg

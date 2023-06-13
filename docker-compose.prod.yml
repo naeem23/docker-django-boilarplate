@@ -1,0 +1,35 @@
+version: '3.9'
+
+services:
+    db:
+        image: mysql:8.0
+        container_name: leafletdistribution_db
+        restart: always
+        ports:
+            - '3306:3306'
+        volumes:
+            - mysql_data:/var/lib/mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=london22
+            - MYSQL_DATABASE=leaflet_distribution
+            - MYSQL_USER=asadistribution
+            - MYSQL_PASSWORD=london22
+
+    server:
+        image: registry.gitlab.com/vemate/tracker/tracker-api:prod
+        container_name: leafletdistribution_server
+        environment:
+            - DJANGO_SETTINGS_MODULE:leafletdistribution.settings.production
+        command: gunicorn -w 4 -b unix:/app/socket/LEAFLET.sock -b 0.0.0.0:8000 leafletdistribution.wsgi:application
+        volumes:
+            - ./.env:/app/.env
+            - ./static:/app/static
+            - ./media:/app/media
+            - ./socket:/app/socket
+        ports:
+            - '8000:8000'
+        depends_on:
+            - db
+
+volumes:
+    mysql_data:

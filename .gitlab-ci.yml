@@ -1,0 +1,48 @@
+stages:
+    - build
+    - test
+    - deploy
+
+production-build:
+    stage: build
+    image: docker:stable
+
+    services:
+        - docker:dind
+
+    before_script:
+        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
+    script:
+        - docker build --pull -t $CI_REGISTRY_IMAGE .
+        - docker push $CI_REGISTRY_IMAGE
+
+        # - docker build -f ./Dockerfile.prod . -t tracker-api:prod
+        # - docker tag tracker-api:prod registry.gitlab.com/vemate/tracker/tracker-api:prod
+        # - docker push registry.gitlab.com/vemate/tracker/tracker-api:prod
+        # - docker rmi registry.gitlab.com/vemate/tracker/tracker-api:prod
+
+    only:
+        refs:
+            - master
+
+production:
+    stage: deploy
+    before_script:
+        - mkdir -p ~/.ssh
+        - cp -rv $API_DPK ~/.ssh/id_rsa_tracker_api
+        - chmod 600 ~/.ssh/id_rsa_tracker_api
+        - eval "$(ssh-agent -s)"
+        - ssh-add ~/.ssh/id_rsa_tracker_api
+        - ssh-keyscan -H $API_SERVER_IP >> ~/.ssh/known_hosts
+    script:
+        - scp -r docker-compose.prod.yml root@$API_SERVER_IP:/www/tracker_api/docker-compose.yml
+        - ssh root@$API_SERVER_IP "export COMPOSE_INTERACTIVE_NO_CLI=1 && cd /www/tracker_api && docker-compose pull server && docker-compose stop server && docker-compose up -d server && docker-compose exec -T server python manage.py migrate && docker-compose exec -T server python manage.py collectstatic --noinput; export COMPOSE_INTERACTIVE_NO_CLI=0"
+    tags:
+        - docker
+        - build
+    only:
+        refs:
+            - main
+        variables:
+            - $CI_COMMIT_MESSAGE =~ /deploy/

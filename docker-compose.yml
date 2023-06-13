@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+    server:
+        build: .
+        container_name: leafletdistribution_server
+        environment:
+            - DJANGO_SETTINGS_MODULE:leafletdistribution.settings.dev
+        command: python manage.py runserver 0.0.0.0:8000
+        volumes:
+            - ./:/app
+        ports:
+            - '8000:8000'
+        depends_on:
+            - db
+    db:
+        image: mysql:8.0
+        container_name: leafletdistribution_db
+        restart: always
+        ports:
+            - '3306:3306'
+        volumes:
+            - mysql_data:/var/lib/mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=london22
+            - MYSQL_DATABASE=leaflet_distribution
+            - MYSQL_USER=asadistribution
+            - MYSQL_PASSWORD=london22
+volumes:
+    mysql_data:
