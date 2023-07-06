@@ -22,7 +22,7 @@ services:
         volumes:
             - mysql_data:/var/lib/mysql
         environment:
-            - MYSQL_ROOT_PASSWORD=london22
+            - MYSQL_HOST=db
             - MYSQL_DATABASE=leaflet_distribution
             - MYSQL_USER=asadistribution
             - MYSQL_PASSWORD=london22

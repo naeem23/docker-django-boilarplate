@@ -1,0 +1,46 @@
+### check pyenv versions:
+pyenv versions
+
+### check python version 
+python --version
+
+### check python list
+pyenv install --list 
+
+### install python using pyenv 
+pyenv install 3.7.2
+
+### install python local version
+pyenv local 3.7.2
+
+#### create venv 
+python -m venv venv
+
+#### docker command to build and run container
+docker-compose up server
+
+#### docker command to create app/migration/migrate and many more 
+docker-compose exec server python manage.py makemigrations
+
+#### access docker container 
+docker-compose exec server bash
+
+#### show docker images
+docker images 
+
+#### show docker container 
+docker ps
+
+#### remove docker image 
+docker rmi <image_id>
+
+#### remove docker container 
+docker rm <container_id>
+or 
+docker rm <container_name>
+
+#### show docker volumes 
+docker volume ls
+
+#### delete docker volume
+docker volume rm my_volume
